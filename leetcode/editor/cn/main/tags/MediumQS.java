@@ -27,6 +27,40 @@ public class MediumQS {
             {
                     {'A'}
             };
+
+    public static void main(String[] args) {
+        MediumQS main = new MediumQS();
+        System.out.println(
+                main.combinationSum3(3, 9)
+        );
+//        main.sortColors(ints);
+//        System.out.println(Arrays.toString(ints));
+    }
+
+    /**
+     * 216 组合总和3
+     **/
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> ans = new ArrayList<>();
+        combinationSum3DFS(k, n, 1, ans, new ArrayList<>());
+        return ans;
+    }
+
+    public void combinationSum3DFS(int k, int sum, int index, List<List<Integer>> ans, List<Integer> list) {
+        if (sum <= 0 || k <= 0) {
+            if (k == 0 && sum == 0) {
+                ans.add(new ArrayList<>(list));
+            }
+        } else {
+            for (int i = index; i < 10; i++) {
+                if (k == 0) break;
+                list.add(i);
+                combinationSum3DFS(k - 1, sum - i, i + 1, ans, list);
+                list.remove(list.size() - 1);
+            }
+        }
+    }
+
     /**
      * 76 组合
      **/
@@ -38,14 +72,6 @@ public class MediumQS {
      **/
     List<List<Integer>> ans = new ArrayList<>();
 
-    public static void main(String[] args) {
-        MediumQS main = new MediumQS();
-        System.out.println(
-                main.removeDuplicates(ints)
-        );
-//        main.sortColors(ints);
-//        System.out.println(Arrays.toString(ints));
-    }
 
     /**
      * 86 分隔链表
