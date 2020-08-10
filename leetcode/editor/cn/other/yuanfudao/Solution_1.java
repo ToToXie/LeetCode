@@ -83,8 +83,8 @@ public class Solution_1 {
         vis[x * n + y] = true;
         int max = 0;
         for (int i = 0; i < 8; i += 2) {
-            int tox = x + Index.nextIndex[i];
-            int toy = y + Index.nextIndex[i + 1];
+            int tox = x + Index.nextIndexOfFour[i];
+            int toy = y + Index.nextIndexOfFour[i + 1];
             if (tox < 0 || toy < 0 || tox >= m || toy >= n) continue;
             if (vis[tox * n + toy]) continue;
             if (g[tox][toy] > g[x][y]) {

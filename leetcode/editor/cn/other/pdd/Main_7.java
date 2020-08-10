@@ -23,6 +23,7 @@ public class Main_7 {
 8 9
 3 1
 7 4
+
 5 10
 7 5
 7 2
@@ -34,17 +35,19 @@ public class Main_7 {
         int t = in.nextInt();
         Node[] numN = new Node[n];
         Node[] numM = new Node[m];
-        int maxN = -1, maxM = -1;
+        int maxN = -1, maxM = -1, ans = Integer.MAX_VALUE;
         for (int i = 0; i < n; i++) {
             int x = in.nextInt();
             int y = in.nextInt();
             maxN = Math.max(y, maxN);
+            if (y >= t) ans = Math.min(ans, x);
             numN[i] = new Node(x, y);
         }
         for (int i = 0; i < m; i++) {
             int x = in.nextInt();
             int y = in.nextInt();
             maxM = Math.max(maxM, y);
+            if (y >= t) ans = Math.min(ans, x);
             numM[i] = new Node(x, y);
         }
 
@@ -53,45 +56,24 @@ public class Main_7 {
         } else if (maxM + maxN < t) {
             System.out.println(-1);
         } else {
-//            暴力法
-//            int ans = Integer.MAX_VALUE;
-//            for (int i = 0; i < n; i++) {
-//                Node a = numN[i];
-//                if(a.y >= t) ans = Math.min(ans, a.x);
-//                for (int j = 0; j < m; j++) {
-//                    Node b = numM[j];
-//                    if(b.y >= t) ans = Math.min(ans, b.x);
-//                    if(a.y + b.y >= t){
-//                        ans = Math.min(ans, a.x+b.x);
-//                    }
-//                }
-//            }
-//            System.out.println(ans);
-
-
-//            dp[k][v] 第k组 物品 放入 空间v的背包中
-//            F [k， v] 表示前 k 组物品花费费用 v 能取得的最大权值
-            int ans = Integer.MAX_VALUE;
-            int V = maxM + maxN + 1;
-            int[] dp = new int[V];
+            /**
+             *  我们容易发现单调性 为了凑够美味度 从美味度从大到小
+             *  热量是具有单调递减特性的（举个例子 如果你5热量可以满足7美味度
+             *  那么5热量肯定满足<=7的美味度） 那么我们维护一个MINN数组从大到小维护
+             *  下标 i 代表至少达到i美味度你需要吃的热量
+             *  那么维护的时候 MINN[i] = min(MINN[I+1],MINN[i])
+             **/
+            int[] dp = new int[maxM + maxN + 1];
             Arrays.fill(dp, Integer.MAX_VALUE);
-            dp[0] = 0;
-            for (int i = 0; i < 2; i++) {
-                if (i == 0) {
-                    for (int v = V - 1; v >= 0; v--) {
-                        for (int j = 0; j < numN.length; j++) {
-                            if (v - numN[j].y >= 0) dp[v] = Math.min(dp[v], dp[v - numN[j].y] + numN[j].x);
-                            if (v >= t) ans = Math.min(ans, dp[v]);
-                        }
-                    }
-                } else {
-                    for (int v = V - 1; v >= 0; v--) {
-                        for (int j = 0; j < numM.length; j++) {
-                            if (v - numM[j].y >= 0) dp[v] = Math.min(dp[v], dp[v - numM[j].y] + numM[j].x);
-                            if (v >= t) ans = Math.min(ans, dp[v]);
-                        }
-                    }
-                }
+            for (int i = 0; i < n; i++) {
+                dp[numN[i].y] = Math.min(dp[numN[i].y], numN[i].x);
+            }
+            for (int i = maxM + maxN - 1; i > 0; i--) {
+                dp[i] = Math.min(dp[i], dp[i + 1]);
+            }
+            for (int i = 0; i < m; i++) {
+                if (numM[i].y >= t) continue;
+                ans = Math.min(ans, dp[t - numM[i].y] + numM[i].x);
             }
             System.out.println(ans);
         }

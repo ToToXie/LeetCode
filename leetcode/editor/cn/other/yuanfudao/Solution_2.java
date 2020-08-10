@@ -57,8 +57,8 @@ public class Solution_2 {
         if (dp[x][y][k] != 0) return dp[x][y][k];
         dp[x][y][k] = 1;
         for (int i = 0; i < 8; i += 2) {
-            int tox = x + Index.nextIndex[i];
-            int toy = y + Index.nextIndex[i + 1];
+            int tox = x + Index.nextIndexOfFour[i];
+            int toy = y + Index.nextIndexOfFour[i + 1];
             if (tox < 0 || toy < 0 || tox >= m || toy >= n) continue;
             if (g[tox][toy] > g[x][y]) {
                 dp[x][y][k] = Math.max(dp[x][y][k], getNumDFS(tox, toy, k) + 1);

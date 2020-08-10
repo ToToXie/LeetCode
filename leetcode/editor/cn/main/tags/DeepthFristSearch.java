@@ -2,11 +2,9 @@ package tags;
 
 import util.ListNode;
 import util.TreeNode;
+import util.UnionFind;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * @program: LeetCode
@@ -17,7 +15,7 @@ import java.util.Queue;
 
 public class DeepthFristSearch {
     static Integer[] integers = {1, 2, 3, null, 5};
-    static int[] ints1 = {1, 2, 3, 4, 5, 6, 7};
+    static final int MOD = 1000000007;
     static Integer[] integers1 = {1, 2, 3, 4, 5, 6, 7};
     static int[] ints2 = {9, 15, 7, 20, 3};
 
@@ -33,13 +31,198 @@ public class DeepthFristSearch {
             {3, 4, 9, 3, 4, 8, 2, 8, 9, 4},
             {4, 9, 1, 3, 9, 5, 4, 9, 1, 3}
     };
+    static int[] ints1 = {4, 6, 7, 7};
+
+    public static void main(String[] args) {
+//        TreeNode treeNode = TreeNode.buildByLevelOrder(integers);
+        DeepthFristSearch main = new DeepthFristSearch();
+//        TreeNode root = TreeNode.buildByLevelOrder(integers1);
+        List<List<String>> list = new ArrayList<>();
+
+        list.add(Arrays.asList("A", "C"));
+        list.add(Arrays.asList("A", "B"));
+        list.add(Arrays.asList("A", "D"));
+        list.add(Arrays.asList("D", "A"));
+
+        System.out.println(
+                main.findPaths(8, 7, 16, 1, 5)
+
+        );
+    }
+
+    /**
+     * 576 出界的路径数
+     **/
+    public int findPathsDP(int m, int n, int N, int x, int y) {
+        int M = 1000000000 + 7;
+        int dp[][] = new int[m][n];
+        dp[x][y] = 1;
+        int count = 0;
+        for (int moves = 1; moves <= N; moves++) {
+            int[][] temp = new int[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i == m - 1) count = (count + dp[i][j]) % M;
+                    if (j == n - 1) count = (count + dp[i][j]) % M;
+                    if (i == 0) count = (count + dp[i][j]) % M;
+                    if (j == 0) count = (count + dp[i][j]) % M;
+                    temp[i][j] = (
+                            ((i > 0 ? dp[i - 1][j] : 0) + (i < m - 1 ? dp[i + 1][j] : 0)) % M +
+                                    ((j > 0 ? dp[i][j - 1] : 0) + (j < n - 1 ? dp[i][j + 1] : 0)) % M
+                    ) % M;
+                }
+            }
+            dp = temp;
+        }
+        return count;
+    }
+
+    public int findPaths(int m, int n, int N, int i, int j) {
+        int[][][] ans = new int[m][n][N + 1];
+        for (int[][] an : ans) {
+            for (int[] ints : an) {
+                Arrays.fill(ints, -1);
+            }
+        }
+        return findPathsDFS(m, n, N, i, j, ans);
+    }
+
+    public int findPathsDFS(int m, int n, int N, int i, int j, int[][][] ans) {
+        if (i < 0 || j < 0 || i >= m || j >= n) return 1;
+        if (N == 0) return 0;
+        if (ans[i][j][N] >= 0) return ans[i][j][N];
+        ans[i][j][N] = (
+                (findPathsDFS(m, n, N - 1, i - 1, j, ans) + findPathsDFS(m, n, N - 1, i, j - 1, ans)) % MOD +
+                        (findPathsDFS(m, n, N - 1, i + 1, j, ans) + findPathsDFS(m, n, N - 1, i, j + 1, ans) % MOD)
+        ) % MOD;
+        return ans[i][j][N];
+    }
+
+    /**
+     * 547 朋友圈
+     **/
+    public int findCircleNum(int[][] M) {
+        if (M == null || M.length < 0) return 0;
+        int n = M.length;
+        UnionFind unionFind = new UnionFind(n);
+        int ans = n;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (M[i][j] == 1) {
+                    if (!unionFind.isConnected(i, j)) {
+                        unionFind.union(i, j);
+                        ans--;
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 491 递增子序列
+     **/
+//    public List<List<Integer>> findSubsequences(int[] nums) {
+//        List<List<Integer>> ans = new LinkedList<>();
+//        if(nums == null || nums.length < 2) return ans;
+//        Set<String> set = new HashSet<>();
+//        findSubsequencesDFS(nums, 0, ans, new LinkedList<>(),set);
+//        return ans;
+//    }
+//    public void findSubsequencesDFS(int[] nums,int index,List<List<Integer>> ans,List<Integer> list,Set<String> set){
+//        if(index == nums.length){
+//            return;
+//        }else {
+//            Set<Integer> sett = new HashSet<>();
+//            for (int i = index; i < nums.length; i++) {
+//                if(i != index && sett.contains(nums[i])) continue;
+//                sett.add(nums[i]);
+//                if(list.size() == 0 || nums[i] >= list.get(list.size() - 1)){
+//                    list.add(nums[i]);
+//                    if(list.size() >= 2 ) {
+////                        if(!set.contains(list.toString())){
+////                            ans.add(new LinkedList<>(list));
+////                            set.add(list.toString());
+////                        }
+//                        ans.add(new LinkedList<>(list));
+//                    }
+//                    findSubsequencesDFS(nums, i+1,ans , list,set);
+//                    list.remove(list.size() - 1);
+//                }
+//            }
+//        }
+//    }
+    public List<List<Integer>> findSubsequences(int[] nums) {
+        List<List<Integer>> ans = new LinkedList<>();
+        if (nums == null || nums.length < 2) return ans;
+        Set<String> set = new HashSet<>();
+        findSubsequencesDFS(nums, 0, ans, new LinkedList<>());
+        return ans;
+    }
+
+    public void findSubsequencesDFS(int[] nums, int index, List<List<Integer>> ans, List<Integer> list) {
+        if (index == nums.length) {
+            return;
+        } else {
+            Set<Integer> sett = new HashSet<>();
+            for (int i = index; i < nums.length; i++) {
+                if (i != index && sett.contains(nums[i])) continue;
+                sett.add(nums[i]);
+                if (list.size() == 0 || nums[i] >= list.get(list.size() - 1)) {
+                    list.add(nums[i]);
+                    if (list.size() >= 2) {
+//                        if(!set.contains(list.toString())){
+//                            ans.add(new LinkedList<>(list));
+//                            set.add(list.toString());
+//                        }
+                        ans.add(new LinkedList<>(list));
+                    }
+                    findSubsequencesDFS(nums, i + 1, ans, list);
+                    list.remove(list.size() - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * 332 重新安排行程
+     * <p>
+     * 假定所有机票至少存在一种合理的行程。
+     **/
+    public List<String> findItinerary(List<List<String>> tickets) {
+        // 因为逆序插入，所以用链表
+        List<String> ans = new LinkedList<>();
+        if (tickets == null || tickets.size() == 0)
+            return ans;
+        Map<String, List<String>> graph = new HashMap<>();
+        for (List<String> pair : tickets) {
+            // 因为涉及删除操作，我们用链表
+            List<String> nbr = graph.computeIfAbsent(pair.get(0), k -> new LinkedList<>());
+//            List<String> nbr = graph.putIfAbsent(pair.get(0), new LinkedList<>());
+
+            nbr.add(pair.get(1));
+        }
+        // 按目的顶点排序
+        graph.values().forEach(x -> x.sort(String::compareTo));
+        visit(graph, "JFK", ans);
+        return ans;
+    }
+
+    // DFS方式遍历图，当走到不能走为止，再将节点加入到答案
+    private void visit(Map<String, List<String>> graph, String src, List<String> ans) {
+        List<String> nbr = graph.get(src);
+        while (nbr != null && nbr.size() > 0) {
+            String dest = nbr.remove(0);
+            visit(graph, dest, ans);
+        }
+        ans.add(0, src); // 逆序插入
+    }
+
     /**
      * 图像渲染
      **/
     static int[] nextIndex = {-1, 0, 1, 0, 0, -1, 0, 1};
-    /**
-     * 求根到叶子节点的数字之和
-     **/
+
     int ans = 0;
     /**
      * 递增顺序查找树
@@ -51,16 +234,10 @@ public class DeepthFristSearch {
     private TreeNode pre = null;
     private ListNode head;
 
-    public static void main(String[] args) {
-        TreeNode treeNode = TreeNode.buildByLevelOrder(integers);
-        DeepthFristSearch main = new DeepthFristSearch();
-        TreeNode root = TreeNode.buildByLevelOrder(integers1);
-        System.out.println(
-//                main.connect(root)
 
-        );
-    }
-
+    /**
+     * 求根到叶子节点的数字之和
+     **/
     public int sumNumbers(TreeNode root) {
         if (root == null) return 0;
         sumNumbersDFS(root, 0);

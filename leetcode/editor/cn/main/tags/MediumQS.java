@@ -1,7 +1,9 @@
 package tags;
 
+import javafx.util.Pair;
 import util.ListNode;
 import util.Swap;
+import util.TreeNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +38,79 @@ public class MediumQS {
 //        main.sortColors(ints);
 //        System.out.println(Arrays.toString(ints));
     }
+    /**
+     *  337 打家劫舍3
+     **/
+//    public int rob(TreeNode root) {
+//        if(root == null) return 0;
+//        if(root.left == null && root.right == null) return root.val;
+//        Map<TreeNode,Integer> fMap = new HashMap<>();
+//        Map<TreeNode,Integer> gMap = new HashMap<>();
+//        myRob3(root, fMap, gMap);
+//        return Math.max(fMap.get(root), gMap.get(root));
+//    }
+//    public void myRob3(TreeNode root,Map<TreeNode,Integer> fMap,Map<TreeNode,Integer> gMap){
+//        if(root == null){
+//            return;
+//        }
+//        myRob3(root.left, fMap, gMap);
+//        myRob3(root.right, fMap, gMap);
+//        fMap.put(root, root.val + gMap.getOrDefault(root.left,0) + gMap.getOrDefault(root.right,0));
+//        gMap.put(root,
+//                Math.max(fMap.getOrDefault(root.left, 0),
+//                        gMap.getOrDefault(root.left,0)) +
+//                Math.max(fMap.getOrDefault(root.right, 0),
+//                        gMap.getOrDefault(root.right,0))
+//                );
+//    }
+
+    /**
+     * 337 打家劫舍3 优化
+     **/
+    public int rob(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left == null && root.right == null) return root.val;
+        Pair<Integer, Integer> ans = myRob3(root);
+        return Math.max(ans.getKey(), ans.getValue());
+    }
+    //Pair<Integer,Integer> key 表示 f（root） value g（root）
+
+    public Pair<Integer, Integer> myRob3(TreeNode root) {
+        if (root == null) {
+            return new Pair<>(0, 0);
+        }
+        Pair<Integer, Integer> left = myRob3(root.left);
+        Pair<Integer, Integer> right = myRob3(root.right);
+        // key 表示 f（root）
+        // value 表示 g（root）
+        int f = root.val + left.getValue() + right.getValue();
+        int g = Math.max(left.getKey(), left.getValue()) + Math.max(right.getKey(), right.getValue());
+        return new Pair<>(f, g);
+    }
+
+    /**
+     * 213 打家劫舍2
+     **/
+    public int rob(int[] nums) {
+        if (nums == null || nums.length < 1) return 0;
+        int n = nums.length;
+        if (n == 1) return nums[0];
+        int a = myRob2(Arrays.copyOfRange(nums, 1, n));
+        int b = myRob2(Arrays.copyOfRange(nums, 0, n - 1));
+        return Math.max(a, b);
+
+    }
+
+    public int myRob2(int[] nums) {
+        int prev = 0, now = 0;
+        for (int num : nums) {
+            int temp = now;
+            now = Math.max(prev + num, now);
+            prev = temp;
+        }
+        return Math.max(now, prev);
+    }
+
 
     /**
      * 216 组合总和3
@@ -178,8 +253,8 @@ public class MediumQS {
         vis[x * n + y] = true;
         boolean flag = false;
         for (int k = 0; k < 8; k += 2) {
-            int toX = x + Index.nextIndex[k];
-            int toY = y + Index.nextIndex[k + 1];
+            int toX = x + Index.nextIndexOfFour[k];
+            int toY = y + Index.nextIndexOfFour[k + 1];
             if (toX < 0 || toY < 0 || toX >= board.length || toY >= n) continue;
             if (!vis[toX * n + toY] && board[toX][toY] == word.charAt(i + 1)) {
 //                System.out.println(board[toX][toY] +"  ---  i : " + (i +1) );

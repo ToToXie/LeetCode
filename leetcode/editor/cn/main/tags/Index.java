@@ -8,5 +8,6 @@ package tags;
  **/
 
 public class Index {
-    public static int[] nextIndex = {-1, 0, 1, 0, 0, -1, 0, 1};
+    public static int[] nextIndexOfFour = {-1, 0, 1, 0, 0, -1, 0, 1};
+    public static int[] nextIndexOfEight = {-1, 0, 1, 0, 0, -1, 0, 1, -1, -1, -1, 1, 1, -1, 1, 1};
 }

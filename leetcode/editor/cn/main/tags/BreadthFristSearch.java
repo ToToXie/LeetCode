@@ -22,8 +22,9 @@ public class BreadthFristSearch {
      * 大西洋 太平洋水流问题
      **/
     static int[] nextIndex = {-1, 0, 1, 0, 0, -1, 0, 1};
+    static int[] click = {3, 0};
     //    static private int[][] intsss = {{1,1},{1,1},{1,1}};
-    static private char[][] board = {{'O', 'X', 'X', 'O', 'X'}, {'X', 'O', 'O', 'X', 'O'}, {'X', 'O', 'X', 'O', 'X'}, {'O', 'X', 'O', 'O', 'O'}, {'X', 'X', 'O', 'X', 'O'}};
+    static private char[][] board = {{'E', 'E', 'E', 'E', 'E'}, {'E', 'E', 'M', 'E', 'E'}, {'E', 'E', 'E', 'E', 'E'}, {'E', 'E', 'E', 'E', 'E'}};
     static private int[][] intss = {{0, 1}};
     static private int[][] intsss = {{-1, -1, -1, -1, -1, -1}, {-1, -1, -1, -1, -1, -1}, {-1, -1, -1, -1, -1, -1}, {-1, 35, -1, -1, 13, -1}, {-1, -1, -1, -1, -1, -1}, {-1, 15, -1, -1, -1, -1}};
     /**
@@ -38,9 +39,50 @@ public class BreadthFristSearch {
 
         System.out.println(
 
-                breadthFristSearch.snakesAndLadders(intsss)
+                breadthFristSearch.updateBoard(board, click)
 
         );
+    }
+
+    /**
+     * 529 扫雷游戏
+     **/
+    public char[][] updateBoard(char[][] board, int[] click) {
+        int x = click[0];
+        int y = click[1];
+        if (board[x][y] == 'X' || board[x][y] == 'M') return board;
+        Queue<Pair<Integer, Integer>> queue = new LinkedList<>();
+        Queue<Pair<Integer, Integer>> temp = new LinkedList<>();
+        queue.add(new Pair<>(x, y));
+        int m = board.length;
+        int n = board[0].length;
+        while (!queue.isEmpty()) {
+            Pair<Integer, Integer> now = queue.poll();
+            x = now.getKey();
+            y = now.getValue();
+            if (board[x][y] == 'B') continue;
+            int count = 0;
+            temp.clear();
+            for (int i = 0; i < 16; i += 2) {
+                int toX = x + Index.nextIndexOfEight[i];
+                int toY = y + Index.nextIndexOfEight[i + 1];
+                if (toX < 0 || toY < 0 || toX >= m || toY >= n) {
+                    continue;
+                }
+                if (board[toX][toY] == 'M') {
+                    count++;
+                } else if (board[toX][toY] == 'E') {
+                    temp.add(new Pair<>(toX, toY));
+                }
+            }
+            if (count == 0) {
+                board[x][y] = 'B';
+                queue.addAll(temp);
+            } else {
+                board[x][y] = (char) ('0' + count);
+            }
+        }
+        return board;
     }
 
     /**
