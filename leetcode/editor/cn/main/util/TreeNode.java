@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -23,6 +24,12 @@ public class TreeNode {
 
     public TreeNode(int x) {
         val = x;
+    }
+
+    public static void main(String[] args) {
+        Integer[] nums = {1, 2, 3, 4, 5, 6, 7};
+        TreeNode ro = buildByLevelOrder(nums);
+        postOrder(ro);
     }
 
     static public TreeNode buildByLevelOrder(Integer[] nums) {
@@ -76,6 +83,32 @@ public class TreeNode {
             root.right = bulideByPreOrderCore(nums);
             return root;
         }
+    }
+
+    /**
+     * 后续非递归
+     **/
+    static public void postOrder(TreeNode root) {
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode now = root, prev = null;
+        while (now == root || !stack.isEmpty()) {
+            if (now != null) {
+                stack.addLast(now);
+                now = now.left;
+            } else {
+                now = stack.peekLast();
+                if (now.right != null && now.right != prev) {
+                    now = now.right;
+                } else {
+                    now = stack.pollLast();
+                    System.out.println(now.val);
+                    prev = now;
+                    now = null;
+                }
+            }
+        }
+
+
     }
 
     @Override
