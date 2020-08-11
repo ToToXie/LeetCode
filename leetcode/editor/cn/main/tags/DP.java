@@ -23,6 +23,57 @@ public class DP {
     }
 
     /**
+     * 120 三角形最小路径和
+     **/
+    public int minimumTotalB(List<List<Integer>> triangle) {
+        int size = triangle.size();
+        int[][] dp = new int[size][size];
+        dp[0][0] = triangle.get(0).get(0);
+        for (int i = 1; i < size; i++) {
+            dp[i][0] = dp[i - 1][0] + triangle.get(i).get(0);
+            for (int j = 1; j < i; j++) {
+                dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle.get(i).get(j);
+            }
+            dp[i][i] = dp[i - 1][i - 1] + triangle.get(i).get(i);
+        }
+        int ans = dp[size - 1][0];
+        for (int i = 1; i < size; i++) {
+            ans = Math.min(ans, dp[size - 1][i]);
+        }
+        return ans;
+
+//        return minimumTotal(triangle, 0, triangle.size());
+    }
+
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int size = triangle.size();
+        int[] dp = new int[size];
+        dp[0] = triangle.get(0).get(0);
+        for (int i = 1; i < size; i++) {
+            dp[i] = dp[i - 1] + triangle.get(i).get(i);
+            for (int j = 1; j < i; j++) {
+                dp[j] = Math.min(dp[j - 1], dp[j]) + triangle.get(i).get(j);
+            }
+            dp[0] = dp[0] + triangle.get(i).get(0);
+        }
+        int ans = dp[0];
+        for (int i = 1; i < size; i++) {
+            ans = Math.min(ans, dp[i]);
+        }
+        return ans;
+
+//        return minimumTotal(triangle, 0, triangle.size());
+    }
+
+    public int minimumTotal(List<List<Integer>> triangle, int index, int level) {
+        if (level == 1) {
+            return triangle.get(triangle.size() - level).get(index);
+        }
+        return triangle.get(triangle.size() - level).get(index) +
+                Math.min(minimumTotal(triangle, index, level - 1), minimumTotal(triangle, index + 1, level - 1));
+    }
+
+    /**
      * 95 不同的二叉搜索树2
      **/
     public List<TreeNode> generateTrees(int n) {
