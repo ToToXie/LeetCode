@@ -16,10 +16,61 @@ public class DP {
     public static final Scanner IN = new Scanner(System.in);
 
     public static void main(String[] args) {
+        DP dp = new DP();
 //        getMaxSumInMap();
 //        getMinCostInShop();
 //        getMaxValueInOdd();
-        getNumsOfPlans();
+//        getNumsOfPlans();
+//        numDecodings("12120");
+        int[][] matrix = {{3, 0, 1, 4, 2}, {5, 6, 3, 2, 1}, {1, 2, 0, 1, 5}, {4, 1, 0, 1, 7}, {1, 0, 3, 0, 5}};
+        NumMatrix numMatrix = dp.new NumMatrix(matrix);
+        System.out.println(Arrays.deepToString(numMatrix.dp));
+    }
+
+    /**
+     * 91 解码方法
+     **/
+    static public int numDecodings(String s) {
+        if (s == null || s.length() < 1 || s.charAt(0) == '0') return 0;
+        int pre = 1, cur = 1;
+        for (int i = 1; i < s.length(); i++) {
+            int temp = cur;
+            char a = s.charAt(i - 1);
+            char b = s.charAt(i);
+            if (b == '0') {
+                if (a == '1' || a == '2') cur = pre;
+                else return 0;
+            } else if (a == '1' || (a == '2' && b > '0' && b < '7')) {
+                cur = cur + pre;
+            }
+            pre = temp;
+        }
+        return cur;
+    }
+
+    class NumMatrix {
+        int[][] dp;
+        int m, n;
+
+        public NumMatrix(int[][] matrix) {
+            if (matrix == null || matrix.length < 1) return;
+            m = matrix.length;
+            ;
+            n = matrix[0].length;
+            dp = new int[m + 1][n + 1];
+            for (int i = 1; i <= m; i++) {
+                for (int j = 1; j <= n; j++) {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1] + matrix[i - 1][j - 1] - dp[i - 1][j - 1];
+                }
+            }
+        }
+
+        public int sumRegion(int row1, int col1, int row2, int col2) {
+            if (dp == null) return 0;
+            if (row1 >= 0 && col1 >= 0 && row2 < m && col2 < n) {
+                return dp[row2 + 1][col2 + 1] - dp[row2 + 1][col1] - dp[row1][col2 + 1] + dp[row1][col1];
+            } else return 0;
+        }
     }
 
     /**

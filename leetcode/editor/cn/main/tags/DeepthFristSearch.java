@@ -31,7 +31,7 @@ public class DeepthFristSearch {
             {3, 4, 9, 3, 4, 8, 2, 8, 9, 4},
             {4, 9, 1, 3, 9, 5, 4, 9, 1, 3}
     };
-    static int[] ints1 = {4, 6, 7, 7};
+    static int[] ints1 = {1, 2, 2};
 
     public static void main(String[] args) {
 //        TreeNode treeNode = TreeNode.buildByLevelOrder(integers);
@@ -45,9 +45,72 @@ public class DeepthFristSearch {
         list.add(Arrays.asList("D", "A"));
 
         System.out.println(
-                main.findPaths(8, 7, 16, 1, 5)
+                main.restoreIpAddresses("25525511135")
 
         );
+    }
+
+    /**
+     * 93 复原 ip 地址
+     **/
+    public List<String> restoreIpAddresses(String s) {
+        List<String> ans = new LinkedList<>();
+        if (s == null) return ans;
+        String[] strs = new String[4];
+        restoreIpAddresses(s, 0, 0, strs, ans);
+        return ans;
+    }
+
+    public void restoreIpAddresses(String s, int segment, int start, String[] strs, List<String> ans) {
+        if (segment == 4 && start == s.length()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                if (i != 0) sb.append(".");
+                sb.append(strs[i]);
+            }
+            ans.add(sb.toString());
+            return;
+        }
+        if (segment == 4 || start == s.length()) return;
+        if (s.charAt(start) == '0') {
+            strs[segment] = "0";
+            restoreIpAddresses(s, segment + 1, start + 1, strs, ans);
+        }
+        int temp = 0;
+        for (int i = start; i < s.length(); i++) {
+            temp = temp * 10 + s.charAt(i) - '0';
+            if (temp <= 0xff && temp > 0) {
+                strs[segment] = Integer.toString(temp);
+                restoreIpAddresses(s, segment + 1, i + 1, strs, ans);
+            } else break;
+        }
+    }
+
+    /**
+     * 90 子集2
+     **/
+
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> ans = new LinkedList<>();
+        if (nums == null || nums.length < 1) return ans;
+        Arrays.sort(nums);
+        ArrayList<Integer> list = new ArrayList<>();
+        ans.add(new ArrayList<>(list));
+        subsetsWithDup(0, nums, nums.length, list, ans);
+        return ans;
+    }
+
+    private void subsetsWithDup(int index, int[] nums, int n, List<Integer> list, List<List<Integer>> ans) {
+        if (index == n) {
+            return;
+        }
+        for (int i = index; i < n; i++) {
+            if (index != i && nums[i] == nums[i - 1]) continue;
+            list.add(nums[i]);
+            ans.add(new ArrayList<>(list));
+            subsetsWithDup(i + 1, nums, n, list, ans);
+            list.remove(list.size() - 1);
+        }
     }
 
     /**

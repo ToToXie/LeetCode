@@ -39,6 +39,9 @@ public class HeapSort {
         }
     }
 
+    /**
+     * 自上而下调整
+     **/
     private void downAdjust(int low, int high) {
         int i = low, j = 2 * i;
         while (j < high) {
@@ -63,6 +66,9 @@ public class HeapSort {
         return temp;
     }
 
+    /**
+     * 自下而上调整
+     **/
     private void upAdjust(int low, int high) {
         int i = high - 1, j = i / 2;
         while (j >= low) {

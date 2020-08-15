@@ -2,6 +2,7 @@ package tags;
 
 import javafx.util.Pair;
 import util.ListNode;
+import util.Node;
 import util.Swap;
 import util.TreeNode;
 
@@ -15,9 +16,10 @@ import java.util.stream.Collectors;
  * @create: 2020-07-20 19:05
  **/
 
-public class MediumQS {
+public class MediumQS_1 {
     public static int[] nextIndex = {-1, 0, 1, 0, 0, -1, 0, 1};
     static int[] ints = {0, 0, 1, 1, 1, 1, 2, 3, 3};
+    static Integer[] integers = {1, null, 2, 3};
     static int[][] intss = {{1, 3, 1}, {1, 5, 1}, {4, 2, 1}};
     static char[][] board =
             {
@@ -31,12 +33,131 @@ public class MediumQS {
             };
 
     public static void main(String[] args) {
-        MediumQS main = new MediumQS();
+        MediumQS_1 main = new MediumQS_1();
+        TreeNode treeNode = TreeNode.buildByLevelOrder(integers);
         System.out.println(
-                main.combinationSum3(3, 9)
+                main.preorderTraversal(treeNode)
         );
 //        main.sortColors(ints);
 //        System.out.println(Arrays.toString(ints));
+    }
+
+    /**
+     * 144 二叉树前序非递归
+     **/
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> ans = new LinkedList<>();
+        if (root == null) return ans;
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode p = root;
+        while (p != null || !stack.isEmpty()) {
+            while (p != null) {
+                stack.addLast(p);
+                ans.add(p.val);
+                p = p.left;
+            }
+            p = stack.pollLast();
+            p = p.right;
+        }
+        return ans;
+    }
+
+    /**
+     * 143 重排链表
+     **/
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null || head.next.next == null) return;
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        fast = slow.next;
+        slow.next = null;
+        ListNode prev = null;
+        while (fast != null) {
+            slow = fast.next;
+            fast.next = prev;
+            prev = fast;
+            fast = slow;
+        }
+        slow = head;
+        fast = prev;
+        while (fast != null) {
+            prev = fast.next;
+            fast.next = slow.next;
+            slow.next = fast;
+            slow = fast.next;
+            fast = prev;
+        }
+    }
+
+    /**
+     * 139 单词拆分
+     **/
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>();
+        int max = -1;
+        for (String it : wordDict) {
+            max = Math.max(max, it.length());
+            set.add(it);
+        }
+        int length = s.length();
+        boolean[] dp = new boolean[length + 1];
+        dp[0] = true;
+        for (int i = 1; i <= length; i++) {
+            for (int j = i; j >= 0 && (i - j + 1) <= max; j--) {
+                dp[i] = dp[j] && set.contains(s.substring(j, i - 1));
+            }
+        }
+        return dp[length];
+    }
+
+    /**
+     * 138 复制带随即指针的链表
+     **/
+    public Node copyRandomList(Node head) {
+        Node now = head;
+        while (now != null) {
+            Node node = new Node(now.val);
+            node.next = now.next;
+            now.next = node;
+            now = node.next;
+        }
+        Node root = new Node(-1);
+        Node p;
+        now = head;
+        while (now != null) {
+            p = now.next;
+            if (now.random != null) p.random = now.random.next;
+            now = now.next.next;
+        }
+        p = root;
+        now = head;
+        while (now != null) {
+            p.next = now.next;
+            p = now.next;
+            if (now.random != null) p.random = now.random.next;
+            now.next = p.next;
+            now = now.next;
+        }
+        return root.next;
+
+    }
+
+    /**
+     * 137 只出现一次的数字2
+     **/
+
+    public int singleNumber(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        for (Map.Entry<Integer, Integer> it : map.entrySet()) {
+            if (it.getValue() == 1) return it.getKey();
+        }
+        return -1;
     }
     /**
      *  337 打家劫舍3
