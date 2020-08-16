@@ -11,20 +11,118 @@ import java.util.*;
  * @create: 2020-08-09 15:05
  **/
 
-public class DP {
+public class DP_1 {
 
     public static final Scanner IN = new Scanner(System.in);
 
     public static void main(String[] args) {
-        DP dp = new DP();
+        DP_1 dp2 = new DP_1();
 //        getMaxSumInMap();
 //        getMinCostInShop();
 //        getMaxValueInOdd();
 //        getNumsOfPlans();
 //        numDecodings("12120");
-        int[][] matrix = {{3, 0, 1, 4, 2}, {5, 6, 3, 2, 1}, {1, 2, 0, 1, 5}, {4, 1, 0, 1, 7}, {1, 0, 3, 0, 5}};
-        NumMatrix numMatrix = dp.new NumMatrix(matrix);
-        System.out.println(Arrays.deepToString(numMatrix.dp));
+//        int[][] matrix = {{3, 0, 1, 4, 2}, {5, 6, 3, 2, 1}, {1, 2, 0, 1, 5}, {4, 1, 0, 1, 7}, {1, 0, 3, 0, 5}};
+//        NumMatrix numMatrix = dp.new NumMatrix(matrix);
+//        System.out.println(Arrays.deepToString(numMatrix.dp));
+        int[] prices = {1, 2, 3, 0, 2};
+        System.out.println(dp2.maxProfit_k_inf_cooling(prices));
+    }
+
+    /**
+     * 123 买卖股票的最佳时机3
+     **/
+    public int maxProfit_k_2(int[] prices) {
+        if (prices == null || prices.length < 1) return 0;
+        int length = prices.length;
+        int[][][] dp = new int[length][3][2];
+//        dp[0][0][0] = 0;
+//        dp[0][0][1] = -prices[0];
+        for (int i = 0; i < length; i++) {
+            for (int k = 2; k >= 1; k--) {
+                if (i == 0) {
+                    dp[i][k][0] = 0;
+                    dp[i][k][1] = -prices[i];
+                    continue;
+                }
+                dp[i][k][0] = Math.max(dp[i - 1][k][0], dp[i - 1][k][1] + prices[i]);
+                dp[i][k][1] = Math.max(dp[i - 1][k][1], dp[i - 1][k - 1][0] - prices[i]);
+            }
+        }
+        return dp[length - 1][2][0];
+    }
+
+    /**
+     * 714 买卖股票的最佳时机  手续费
+     **/
+    public int maxProfit_k_inf_fee(int[] prices, int fee) {
+        if (prices == null || prices.length < 1) return 0;
+        int dp_i_0 = 0, dp_i_1 = Integer.MIN_VALUE;
+        for (int i = 0; i < prices.length; i++) {
+            if (i == 0) {
+                dp_i_0 = 0;
+                dp_i_1 = -prices[i];
+            }
+            int temp = dp_i_0;
+            dp_i_0 = Math.max(dp_i_0, dp_i_1 + prices[i] - fee);
+            dp_i_1 = Math.max(dp_i_1, temp - prices[i]);
+        }
+        return dp_i_0;
+    }
+
+    /**
+     * 309 买卖股票的最佳时机  冷冻期
+     **/
+    public int maxProfit_k_inf_cooling(int[] prices) {
+        if (prices == null || prices.length < 1) return 0;
+        int dp_i_0 = 0, dp_i_1 = Integer.MIN_VALUE, dp_pre_0 = 0;
+        for (int i = 0; i < prices.length; i++) {
+            if (i == 0) {
+                dp_i_0 = 0;
+                dp_i_1 = -prices[i];
+            }
+            int temp = dp_i_0;
+            dp_i_0 = Math.max(dp_i_0, dp_i_1 + prices[i]);
+            dp_i_1 = Math.max(dp_i_1, dp_pre_0 - prices[i]);
+            dp_pre_0 = temp;
+        }
+        return dp_i_0;
+    }
+
+    /**
+     * 188 买卖股票的最佳时机4
+     **/
+    public int maxProfit_k_any(int k, int[] prices) {
+        if (prices == null || prices.length < 1) return 0;
+        int length = prices.length;
+        if (k >= length / 2) {
+            return maxProfit_k_inf(prices);
+        }
+        int[][][] dp = new int[length][k + 1][2];
+//        dp[0][0][0] = 0;
+//        dp[0][0][1] = -prices[0];
+        for (int i = 0; i < length; i++) {
+            for (int j = k; j >= 1; j--) {
+                if (i == 0) {
+                    dp[i][j][0] = 0;
+                    dp[i][j][1] = -prices[i];
+                    continue;
+                }
+                dp[i][j][0] = Math.max(dp[i - 1][j][0], dp[i - 1][j][1] + prices[i]);
+                dp[i][j][1] = Math.max(dp[i - 1][j][1], dp[i - 1][j - 1][0] - prices[i]);
+            }
+        }
+        return dp[length - 1][k][0];
+    }
+
+    public int maxProfit_k_inf(int[] prices) {
+        if (prices == null || prices.length < 1) return 0;
+        int dp_i_0 = 0, dp_i_1 = -prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            dp_i_0 = Math.max(dp_i_0, dp_i_1 + prices[i]);
+            dp_i_1 = Math.max(dp_i_1, dp_i_0 - prices[i]);
+        }
+        return dp_i_0;
     }
 
     /**
