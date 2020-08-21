@@ -1,10 +1,9 @@
 package tags;
 
 import javafx.util.Pair;
+import util.TreeNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: LeetCode
@@ -21,12 +20,134 @@ public class DP_2 {
     static List<Integer> list = new ArrayList<>();
     static int a = 0, b = 0, c = 0;
 
+    int max = -1;
+
     public static void main(String[] args) {
         DP_2 dp = new DP_2();
 //        System.out.println(dp.nthUglyNumber(5));
 //        System.out.println(dp.nthUglyNumber(10));
-        System.out.println(Arrays.toString(dp.countBits(5)));
+        System.out.println(dp.solveNQueens(4));
     }
+
+    /**
+     * 508 出现次数最多的子树元素和
+     **/
+    public int[] findFrequentTreeSum(TreeNode root) {
+        if (root == null) return null;
+        Map<Integer, Integer> map = new HashMap<>();
+        findFrequentTreeSumCore(root, map);
+        return map.entrySet().stream().filter(it -> it.getValue() == max).mapToInt(it -> it.getKey()).toArray();
+
+    }
+
+    private int findFrequentTreeSumCore(TreeNode root, Map<Integer, Integer> map) {
+        if (root == null) return 0;
+        int left = findFrequentTreeSumCore(root.left, map);
+        int right = findFrequentTreeSumCore(root.right, map);
+        int temp = root.val + left + right;
+        map.put(temp, map.getOrDefault(temp, 0) + 1);
+        max = Math.max(max, map.get(temp));
+        return temp;
+    }
+
+    /**
+     * 51 n皇后
+     **/
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> ans = new LinkedList<>();
+        if (n < 1) return ans;
+        int[] dp = new int[n];
+        boolean[] vis = new boolean[n];
+        String str = "";
+        for (int i = 0; i < n; i++) {
+            str += '.';
+        }
+        final char[] chars = str.toCharArray();
+        solveNQueens(dp, vis, 0, n, ans, new ArrayList<>(), chars);
+        return ans;
+
+    }
+
+    public void solveNQueens(int[] dp, boolean[] vis, int index, int n, List<List<String>> ans, List<String> list, char[] chars) {
+        if (index == n) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        for (int i = 0; i < n; i++) {
+            if (!vis[i] && isTrue(dp, index, i)) {
+                vis[i] = true;
+                dp[index] = i;
+                chars[i] = 'Q';
+                list.add(new String(chars));
+                chars[i] = '.';
+                solveNQueens(dp, vis, index + 1, n, ans, list, chars);
+                list.remove(list.size() - 1);
+                vis[i] = false;
+            }
+        }
+
+    }
+
+    private boolean isTrue(int[] dp, int index, int value) {
+        for (int j = 0; j < index; j++) {
+            if (Math.abs(index - j) == Math.abs(value - dp[j])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 52 n皇后 2
+     **/
+    public int backtrack(int row, int hills, int next_row, int dales, int count, int n) {
+        /**
+         row: 当前放置皇后的行号
+         hills: 主对角线占据情况 [1 = 被占据，0 = 未被占据]
+         next_row: 下一行被占据的情况 [1 = 被占据，0 = 未被占据]
+         dales: 次对角线占据情况 [1 = 被占据，0 = 未被占据]
+         count: 所有可行解的个数
+         */
+
+        // 棋盘所有的列都可放置，
+        // 即，按位表示为 n 个 '1'
+        // bin(cols) = 0b1111 (n = 4), bin(cols) = 0b111 (n = 3)
+        // [1 = 可放置]
+        int columns = (1 << n) - 1;
+
+        if (row == n)   // 如果已经放置了 n 个皇后
+            count++;  // 累加可行解
+        else {
+            // 当前行可用的列
+            // ! 表示 0 和 1 的含义对于变量 hills, next_row and dales的含义是相反的
+            // [1 = 未被占据，0 = 被占据]
+            int free_columns = columns & ~(hills | next_row | dales);
+
+            // 找到可以放置下一个皇后的列
+            while (free_columns != 0) {
+                // free_columns 的第一个为 '1' 的位
+                // 在该列我们放置当前皇后
+                int curr_column = -free_columns & free_columns;
+
+                // 放置皇后
+                // 并且排除对应的列
+                free_columns ^= curr_column;
+
+                count = backtrack(row + 1,
+                        (hills | curr_column) << 1,
+                        next_row | curr_column,
+                        (dales | curr_column) >> 1,
+                        count, n);
+            }
+        }
+
+        return count;
+    }
+
+    public int totalNQueens(int n) {
+        return backtrack(0, 0, 0, 0, 0, n);
+    }
+
 
     /**
      * 338 比特位计数
@@ -126,4 +247,5 @@ public class DP_2 {
         System.out.println(list.toString());
         return list.get(list.size() - 1);
     }
+
 }

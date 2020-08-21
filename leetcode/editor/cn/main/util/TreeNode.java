@@ -113,8 +113,16 @@ public class TreeNode {
 
     @Override
     public String toString() {
-        return "TreeNode{" +
-                "val=" + val +
-                '}';
+        Queue<TreeNode> queue = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+        TreeNode now = this;
+        queue.add(now);
+        while (!queue.isEmpty()) {
+            now = queue.poll();
+            sb.append(now.val + " , ");
+            if (now.left != null) queue.add(now.left);
+            if (now.right != null) queue.add(now.right);
+        }
+        return sb.toString();
     }
 }
