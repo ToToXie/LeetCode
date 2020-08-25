@@ -13,7 +13,7 @@ import java.util.*;
  **/
 
 public class DP_2 {
-    static int[] ints1 = {1, 2, 3};
+    static int[] ints1 = {1, 100, 1, 1, 1, 100, 1, 1, 100, 1};
     /**
      * 264 丑数2
      **/
@@ -26,7 +26,60 @@ public class DP_2 {
         DP_2 dp = new DP_2();
 //        System.out.println(dp.nthUglyNumber(5));
 //        System.out.println(dp.nthUglyNumber(10));
-        System.out.println(dp.solveNQueens(4));
+        System.out.println(dp.waysToStep(5));
+    }
+
+    /**
+     * 面试题 08.01 三步问题
+     **/
+    public int waysToStep(int n) {
+        long a = 0, b = 0, c = 0;
+        long temp = 1;
+        final int MOD = 1000000007;
+        for (int i = 0; i < n; i++) {
+            a += temp;
+            b += temp;
+            c += temp;
+            temp = a % MOD;
+            a = b % MOD;
+            b = c % MOD;
+            c = 0;
+        }
+        return (int) temp;
+    }
+
+    /**
+     * 1025 除数博弈
+     **/
+    public boolean divisorGame(int N) {
+        boolean[] win = new boolean[N + 5];
+        win[1] = false;
+        win[2] = true;
+        for (int i = 3; i <= N; i++) {
+            for (int j = 1; j < i; j++) {
+                if (i % j == 0 && !win[i - j]) {
+                    win[i] = true;
+                    break;
+                }
+            }
+        }
+        return win[N];
+    }
+
+    /**
+     * 746 使用最小的力气爬楼梯
+     **/
+    public int minCostClimbingStairs(int[] cost) {
+        int[] dp = new int[cost.length + 1];
+        int a = 0, b = 0, c = 0;
+
+        for (int i = cost.length - 1; i >= 0; i--) {
+            c = cost[i] + Math.min(a, b);
+            b = a;
+            a = c;
+
+        }
+        return Math.min(a, b);
     }
 
     /**
