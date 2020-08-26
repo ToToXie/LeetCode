@@ -1,6 +1,8 @@
 package meituan;
 
 import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @program: LeetCode
@@ -30,10 +32,13 @@ public class Main_6 {
 
     public static void main(String[] args) {
         int[] nums = {1, 3, 5, 2, 4, 6};
-        System.out.println(getNum(nums));
+        System.out.println(getNum_2(nums));
     }
 
-    static int getNum(int[] nums) {
+    /**
+     * 归并排序
+     **/
+    static int getNum_1(int[] nums) {
         int n = nums.length;
         sum = 0;
         temp = new int[n];
@@ -66,5 +71,19 @@ public class Main_6 {
         for (int k = s; k <= r2; k++) {
             nums[k] = temp[index++];
         }
+    }
+
+    /**
+     * TreeSet 版
+     **/
+    static int getNum_2(int[] nums) {
+        int sum = 0;
+        SortedSet<Integer> set = new TreeSet<>();
+        for (int i = nums.length; i > 0; i--) {
+            int x = nums[i - 1];
+            sum += x * (set.tailSet(x).size());
+            set.add(x);
+        }
+        return sum;
     }
 }
