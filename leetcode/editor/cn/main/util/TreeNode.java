@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -26,10 +27,14 @@ public class TreeNode {
         val = x;
     }
 
+    static int[] preOrder = {1, 2, 4, 5, 3, 6, 7};
+    static int[] inOrder = {4, 2, 5, 1, 6, 3, 7};
+
     public static void main(String[] args) {
-        Integer[] nums = {1, 2, 3, 4, 5, 6, 7};
-        TreeNode ro = buildByLevelOrder(nums);
-        postOrder(ro);
+//        Integer[] nums = {1, 2, 3, 4, 5, 6, 7};
+//        TreeNode ro = buildByLevelOrder(nums);
+//        postOrder(ro);
+        System.out.println(Arrays.toString(getPostOrderByPreOrderAndInOrder(preOrder, inOrder)));
     }
 
     static public TreeNode buildByLevelOrder(Integer[] nums) {
@@ -109,6 +114,30 @@ public class TreeNode {
         }
 
 
+    }
+
+    static public int[] getPostOrderByPreOrderAndInOrder(int[] preOrder, int[] inOrder) {
+        int length = preOrder.length;
+        int[] postOrder = new int[length];
+        getPostOrderByPreOrderAndInOrder(postOrder, preOrder, inOrder, 0, length, 0, length, length);
+        return postOrder;
+    }
+
+    static private void getPostOrderByPreOrderAndInOrder(int[] postOrder, int[] preOrder, int[] inOrder,
+                                                         int preleft, int preRight, int inLeft, int inRight, int postRight) {
+        if (preleft == preRight || inLeft == inRight) return;
+        int root = preOrder[preleft];
+        int count = 0;
+        for (int i = inLeft; i < inRight; i++) {
+            if (root != inOrder[i]) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        postOrder[postRight - 1] = root;
+        getPostOrderByPreOrderAndInOrder(postOrder, preOrder, inOrder, preleft + 1, preleft + 1 + count, inLeft, inLeft + count, postRight - preRight + preleft + count);
+        getPostOrderByPreOrderAndInOrder(postOrder, preOrder, inOrder, preleft + 1 + count, preRight, inLeft + count + 1, inRight, postRight - 1);
     }
 
     @Override
