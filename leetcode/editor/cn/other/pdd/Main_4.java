@@ -58,7 +58,6 @@ public class Main_4 {
                 sb.append('a');
                 n--;
                 K--;
-
             } else if (n == 0 && m > 0) {
                 sb.append('b');
                 m--;
