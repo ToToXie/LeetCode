@@ -13,6 +13,18 @@ public class Mathh {
         return gcd(b, a % b);
     }
 
+    public static int lcm(int a, int b) {
+        return a * b / gcd(a, b);
+    }
+
+    static public int C(int m, int n) {
+        int ans = 1;
+        for (int i = 1; i <= m; i++) {
+            ans *= (n - m + i) / i;
+        }
+        return ans;
+    }
+
     /**
      * 求阶乘
      **/
